@@ -1,5 +1,9 @@
 # httperr
 
+[![Build Status](https://img.shields.io/travis/com/caarlos0/httperr.svg?logo=travis&style=for-the-badge)](https://travis-ci.com/caarlos0/httperr)
+[![Coverage Status](https://img.shields.io/codecov/c/gh/caarlos0/httperr.svg?logo=codecov&style=for-the-badge)](https://codecov.io/gh/caarlos0/httperr)
+[![](http://img.shields.io/badge/godoc-reference-5272B4.svg?style=for-the-badge)](http://godoc.org/github.com/caarlos0/httperr)
+
 I've been doing this in several different projects, I finally decided to
 convert it to a proper lib.
 
