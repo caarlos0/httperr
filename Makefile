@@ -28,4 +28,8 @@ lint:
 ci: build test lint
 .PHONY: ci
 
+card:
+	wget -O card.png -c "https://og.caarlos0.dev/**httperr**:%20better%20handle%20errors%20on%20HTTP%20handlers.png?theme=light&md=1&fontSize=100px&images=https://github.com/caarlos0.png"
+.PHONY: card
+
 .DEFAULT_GOAL := ci
