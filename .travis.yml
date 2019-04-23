@@ -1,7 +1,7 @@
 language: go
 go:
   - '1.12.x'
-install:
+install: make setup
 script: make ci
 after_success:
   - bash <(curl -s https://codecov.io/bash)

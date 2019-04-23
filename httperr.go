@@ -65,7 +65,7 @@ func New(next Handler) http.Handler {
 }
 
 // NewF wraps a given http.HandlerFunc and return a http.Handler
-func NewF(next HandlerFunc) http.Handler {
+func NewF(next HandlerFunc) http.Handler { // nolint: interfacer
 	return New(next)
 }
 
