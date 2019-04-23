@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-// Error is an error plus the status code
+// Error is a HTTP error with an underlying error and a status code.
 type Error struct {
 	Err    error
 	Status int
@@ -43,7 +43,7 @@ func (f HandlerFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) error {
 	return f(w, r)
 }
 
-// New wraps a given Handler and returns a http.Handler.
+// New wraps a given http.Handler and returns a http.Handler.
 func New(next Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		err := next.ServeHTTP(w, r)
@@ -64,7 +64,7 @@ func New(next Handler) http.Handler {
 	})
 }
 
-// NewF wraps a given HandlerFunc and return a http.Handler
+// NewF wraps a given http.HandlerFunc and return a http.Handler
 func NewF(next HandlerFunc) http.Handler {
 	return New(next)
 }
