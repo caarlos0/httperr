@@ -23,7 +23,7 @@ func Wrap(err error, status int) error {
 	if err == nil {
 		return nil
 	}
-	return Error{
+	return Error{ // nolint: wsl
 		Err:    err,
 		Status: status,
 	}
@@ -64,7 +64,7 @@ func New(next Handler) http.Handler {
 	})
 }
 
-// NewF wraps a given http.HandlerFunc and return a http.Handler
+// NewF wraps a given http.HandlerFunc and return a http.Handler.
 func NewF(next HandlerFunc) http.Handler { // nolint: interfacer
 	return New(next)
 }
