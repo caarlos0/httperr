@@ -4,6 +4,7 @@ package httperr
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 )
 
@@ -53,8 +54,8 @@ func New(next Handler) http.Handler {
 
 		var msg = err.Error()
 		var status = http.StatusInternalServerError
-		herr, ok := err.(Error)
-		if ok {
+		var herr = Error{}
+		if errors.As(err, &herr) {
 			status = herr.Status
 		}
 		bts, _ := json.Marshal(errorResponse{
