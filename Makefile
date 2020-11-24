@@ -22,7 +22,7 @@ cover: test
 .PHONY: cover
 
 lint:
-	./bin/golangci-lint run --tests=false --enable-all --disable=lll --disable=gofumpt ./...
+	./bin/golangci-lint run ./...
 .PHONY: lint
 
 ci: build test lint
