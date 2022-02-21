@@ -5,9 +5,9 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
+	"strings"
 	"testing"
-
-	"github.com/stretchr/testify/require"
 )
 
 func TestServeNoError(t *testing.T) {
@@ -17,7 +17,10 @@ func TestServeNoError(t *testing.T) {
 		return nil
 	}).ServeHTTP(w, req)
 	resp := w.Result()
-	require.Equal(t, http.StatusOK, resp.StatusCode)
+
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("expected http status ok, got %d", resp.StatusCode)
+	}
 }
 
 func TestServeHTTPError(t *testing.T) {
@@ -32,10 +35,17 @@ func TestServeHTTPError(t *testing.T) {
 		}
 	}).ServeHTTP(w, req)
 	resp := w.Result()
-	require.Equal(t, status, resp.StatusCode)
+	if resp.StatusCode != status {
+		t.Fatalf("expected http status %d, got %d", status, resp.StatusCode)
+	}
+
 	bts, err := ioutil.ReadAll(resp.Body)
-	require.NoError(t, err)
-	require.Contains(t, string(bts), msg)
+	if err != nil {
+		t.Fatalf("got error: %v", err)
+	}
+	if !strings.Contains(string(bts), msg) {
+		t.Fatalf("%q does not contain %q", string(bts), msg)
+	}
 }
 
 func TestServeError(t *testing.T) {
@@ -46,10 +56,19 @@ func TestServeError(t *testing.T) {
 		return fmt.Errorf(msg)
 	}).ServeHTTP(w, req)
 	resp := w.Result()
-	require.Equal(t, http.StatusInternalServerError, resp.StatusCode)
+
+	status := http.StatusInternalServerError
+	if resp.StatusCode != status {
+		t.Fatalf("expected http status %d, got %d", status, resp.StatusCode)
+	}
+
 	bts, err := ioutil.ReadAll(resp.Body)
-	require.NoError(t, err)
-	require.Contains(t, string(bts), msg)
+	if err != nil {
+		t.Fatalf("got error: %v", err)
+	}
+	if !strings.Contains(string(bts), msg) {
+		t.Fatalf("%q does not contain %q", string(bts), msg)
+	}
 }
 
 func TestWrap(t *testing.T) {
@@ -83,9 +102,13 @@ func TestWrap(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			var err = Wrap(tt.args.err, tt.args.status)
 			if tt.wantErr {
-				require.Error(t, err)
+				if err == nil {
+					t.Fatalf("expected error, got none")
+				}
 			} else {
-				require.NoError(t, err)
+				if err != nil {
+					t.Fatalf("expected no error, got %v", err)
+				}
 			}
 		})
 	}
@@ -93,8 +116,12 @@ func TestWrap(t *testing.T) {
 
 func TestErrorf(t *testing.T) {
 	err := Errorf(http.StatusConflict, "foo bar %d", 10)
-	require.Equal(t, Error{
+	expectedErr := Error{
 		Err:    fmt.Errorf("foo bar 10"),
 		Status: http.StatusConflict,
-	}, err)
+	}
+
+	if !reflect.DeepEqual(err, expectedErr) {
+		t.Fatalf("errors does not match: %v", err)
+	}
 }
