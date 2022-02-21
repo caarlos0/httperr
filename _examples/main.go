@@ -24,6 +24,10 @@ func main() {
 		return httperr.Wrap(fmt.Errorf("wrap another err into a bad request"), http.StatusBadRequest)
 	}))
 
+	mux.Handle("/ef", httperr.NewF(func(w http.ResponseWriter, r *http.Request) error {
+		return httperr.Errorf(http.StatusConflict, "create new conflict error: %v", 123)
+	}))
+
 	var server = &http.Server{
 		Addr:    ":8080",
 		Handler: mux,

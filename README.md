@@ -31,4 +31,16 @@ mux.Handle("/e", httperr.NewF(func(w http.ResponseWriter, r *http.Request) error
 }))
 ```
 
+Or, you can throw errors with a status, e.g.:
+
+```go
+mux.Handle("/e", httperr.NewF(func(w http.ResponseWriter, r *http.Request) error {
+  if something {
+	return httperr.Errorf(http.StatusBadRequest, "something: %v", something)
+  }
+  return nil
+}))
+```
+
+
 So, this is it! You can also check the `examples` folder for a "real" usage.
