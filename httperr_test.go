@@ -90,3 +90,11 @@ func TestWrap(t *testing.T) {
 		})
 	}
 }
+
+func TestErrorf(t *testing.T) {
+	err := Errorf(http.StatusConflict, "foo bar %d", 10)
+	require.Equal(t, Error{
+		Err:    fmt.Errorf("foo bar 10"),
+		Status: http.StatusConflict,
+	}, err)
+}

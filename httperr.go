@@ -4,6 +4,7 @@ package httperr
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -27,6 +28,11 @@ func Wrap(err error, status int) error {
 		Err:    err,
 		Status: status,
 	}
+}
+
+// Errorf creates a new error and wraps it with the given status
+func Errorf(status int, format string, args ...interface{}) error {
+	return Wrap(fmt.Errorf(format, args...), status)
 }
 
 // Handler is like http.Handler, but the ServeHTTP method can also return
