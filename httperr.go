@@ -50,25 +50,46 @@ func (f HandlerFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) error {
 	return f(w, r)
 }
 
-// New wraps a given http.Handler and returns a http.Handler.
-func New(next Handler) http.Handler {
+// ErrorHandler handles an error.
+type ErrorHandler func(w http.ResponseWriter, err error, status int)
+
+// DefaultErrorHandler is the default error handler.
+// It converts the error to JSON and prints writes it to the response.
+func DefaultErrorHandler(w http.ResponseWriter, err error, status int) {
+	msg := err.Error()
+	bts, _ := json.Marshal(errorResponse{
+		Error: msg,
+	})
+	http.Error(w, string(bts), status)
+}
+
+// NewWithHandler() wraps a given http.Handler and returns a http.Handler.
+// You can also customize how the error is handled.
+func NewWithHandler(next Handler, eh ErrorHandler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		err := next.ServeHTTP(w, r)
 		if err == nil {
 			return
 		}
 
-		var msg = err.Error()
-		var status = http.StatusInternalServerError
-		var herr = Error{}
+		herr := Error{}
 		if errors.As(err, &herr) {
-			status = herr.Status
+			eh(w, herr, herr.Status)
+		} else {
+			eh(w, err, http.StatusInternalServerError)
 		}
-		bts, _ := json.Marshal(errorResponse{
-			Error: msg,
-		})
-		http.Error(w, string(bts), status)
 	})
+}
+
+// New wraps a given http.Handler and returns a http.Handler.
+func New(next Handler) http.Handler {
+	return NewWithHandler(next, DefaultErrorHandler)
+}
+
+// NewFWithHandler wraps a given http.HandlerFunc and return a http.Handler.
+// You can also customize how the error is handled.
+func NewFWithHandler(next HandlerFunc, eh ErrorHandler) http.Handler { // nolint: interfacer
+	return NewWithHandler(next, eh)
 }
 
 // NewF wraps a given http.HandlerFunc and return a http.Handler.
