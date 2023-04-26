@@ -1,7 +1,6 @@
 # httperr
 
-[![Build
-Status](https://img.shields.io/github/actions/workflow/status/caarlos0/httperr/build.yml?branch=main)](https://github.com/caarlos0/httperr/actions?workflow=build)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/caarlos0/httperr/build.yml?branch=main&style=for-the-badge)](https://github.com/caarlos0/httperr/actions?workflow=build)
 [![Coverage Status](https://img.shields.io/codecov/c/gh/caarlos0/httperr.svg?logo=codecov&style=for-the-badge)](https://codecov.io/gh/caarlos0/httperr)
 [![](http://img.shields.io/badge/godoc-reference-5272B4.svg?style=for-the-badge)](http://godoc.org/github.com/caarlos0/httperr)
 
