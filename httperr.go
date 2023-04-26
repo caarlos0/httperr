@@ -19,6 +19,16 @@ func (e Error) Error() string {
 	return e.Err.Error()
 }
 
+// Is conforms with errors.Is.
+func (e Error) Is(err error) bool {
+	switch err.(type) {
+	case Error:
+		return true
+	default:
+		return errors.Is(e.Err, err)
+	}
+}
+
 // Wrap a given error with the given status.
 // Returns nil if the given error is nil.
 func Wrap(err error, status int) error {

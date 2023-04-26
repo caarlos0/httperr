@@ -1,7 +1,9 @@
 package httperr
 
 import (
+	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -100,7 +102,7 @@ func TestWrap(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var err = Wrap(tt.args.err, tt.args.status)
+			err := Wrap(tt.args.err, tt.args.status)
 			if tt.wantErr {
 				if err == nil {
 					t.Fatalf("expected error, got none")
@@ -112,6 +114,26 @@ func TestWrap(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestErrorIs(t *testing.T) {
+	t.Run("outer", func(t *testing.T) {
+		if !errors.Is(Wrap(io.EOF, http.StatusGone), Error{}) {
+			t.Fatalf("underlying error should be Error")
+		}
+	})
+
+	t.Run("is", func(t *testing.T) {
+		if !errors.Is(Wrap(io.EOF, http.StatusGone), io.EOF) {
+			t.Fatalf("underlying error should be io.EOF")
+		}
+	})
+
+	t.Run("is not", func(t *testing.T) {
+		if errors.Is(Wrap(io.ErrUnexpectedEOF, http.StatusGone), io.EOF) {
+			t.Fatalf("underlying error should not be io.EOF")
+		}
+	})
 }
 
 func TestErrorf(t *testing.T) {
