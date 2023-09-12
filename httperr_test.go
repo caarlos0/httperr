@@ -41,6 +41,11 @@ func TestServeHTTPError(t *testing.T) {
 		t.Fatalf("expected http status %d, got %d", status, resp.StatusCode)
 	}
 
+	contentType := "application/json; charset=utf-8"
+	if resp.Header.Get("Content-Type") != contentType {
+		t.Fatalf("expected Content-Type '%s', got '%s'", contentType, resp.Header.Get("Content-Type"))
+	}
+
 	bts, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatalf("got error: %v", err)
@@ -62,6 +67,11 @@ func TestServeError(t *testing.T) {
 	status := http.StatusInternalServerError
 	if resp.StatusCode != status {
 		t.Fatalf("expected http status %d, got %d", status, resp.StatusCode)
+	}
+
+	contentType := "application/json; charset=utf-8"
+	if resp.Header.Get("Content-Type") != contentType {
+		t.Fatalf("expected Content-Type '%s', got '%s'", contentType, resp.Header.Get("Content-Type"))
 	}
 
 	bts, err := ioutil.ReadAll(resp.Body)

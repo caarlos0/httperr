@@ -70,7 +70,11 @@ func DefaultErrorHandler(w http.ResponseWriter, err error, status int) {
 	bts, _ := json.Marshal(errorResponse{
 		Error: msg,
 	})
-	http.Error(w, string(bts), status)
+
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.WriteHeader(status)
+	fmt.Fprintln(w, string(bts))
 }
 
 // NewWithHandler() wraps a given http.Handler and returns a http.Handler.
