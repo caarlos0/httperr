@@ -61,11 +61,11 @@ func (f HandlerFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) error {
 }
 
 // ErrorHandler handles an error.
-type ErrorHandler func(w http.ResponseWriter, err error, status int)
+type ErrorHandler func(w http.ResponseWriter, r *http.Request, err error, status int)
 
 // DefaultErrorHandler is the default error handler.
 // It converts the error to JSON and prints writes it to the response.
-func DefaultErrorHandler(w http.ResponseWriter, err error, status int) {
+func DefaultErrorHandler(w http.ResponseWriter, r *http.Request, err error, status int) {
 	msg := err.Error()
 	bts, _ := json.Marshal(errorResponse{
 		Error: msg,
@@ -88,9 +88,9 @@ func NewWithHandler(next Handler, eh ErrorHandler) http.Handler {
 
 		herr := Error{}
 		if errors.As(err, &herr) {
-			eh(w, herr, herr.Status)
+			eh(w, r, herr, herr.Status)
 		} else {
-			eh(w, err, http.StatusInternalServerError)
+			eh(w, r, err, http.StatusInternalServerError)
 		}
 	})
 }
