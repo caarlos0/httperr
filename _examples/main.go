@@ -5,11 +5,11 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/caarlos0/httperr"
+	"github.com/caarlos0/httperr/v2"
 )
 
 func main() {
-	var mux = http.NewServeMux()
+	mux := http.NewServeMux()
 
 	mux.Handle("/s", httperr.NewF(func(w http.ResponseWriter, r *http.Request) error {
 		fmt.Fprintln(w, "this is OK")
@@ -28,7 +28,7 @@ func main() {
 		return httperr.Errorf(http.StatusConflict, "create new conflict error: %v", 123)
 	}))
 
-	var server = &http.Server{
+	server := &http.Server{
 		Addr:    ":8080",
 		Handler: mux,
 	}
