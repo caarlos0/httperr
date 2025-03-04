@@ -1,4 +1,5 @@
 version: 2
+
 includes:
   - from_url:
       url: https://raw.githubusercontent.com/caarlos0/.goreleaserfiles/main/lib.yml
