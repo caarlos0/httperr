@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -33,7 +32,7 @@ func TestServeHTTPError(t *testing.T) {
 	NewF(func(w http.ResponseWriter, r *http.Request) error {
 		return Error{
 			Status: status,
-			Err:    fmt.Errorf(msg),
+			Err:    errors.New(msg),
 		}
 	}).ServeHTTP(w, req)
 	resp := w.Result()
@@ -46,7 +45,7 @@ func TestServeHTTPError(t *testing.T) {
 		t.Fatalf("expected Content-Type '%s', got '%s'", contentType, resp.Header.Get("Content-Type"))
 	}
 
-	bts, err := ioutil.ReadAll(resp.Body)
+	bts, err := io.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatalf("got error: %v", err)
 	}
@@ -60,7 +59,7 @@ func TestServeError(t *testing.T) {
 	w := httptest.NewRecorder()
 	msg := "server is doing funky stuff"
 	NewF(func(w http.ResponseWriter, r *http.Request) error {
-		return fmt.Errorf(msg)
+		return errors.New(msg)
 	}).ServeHTTP(w, req)
 	resp := w.Result()
 
@@ -74,7 +73,7 @@ func TestServeError(t *testing.T) {
 		t.Fatalf("expected Content-Type '%s', got '%s'", contentType, resp.Header.Get("Content-Type"))
 	}
 
-	bts, err := ioutil.ReadAll(resp.Body)
+	bts, err := io.ReadAll(resp.Body)
 	if err != nil {
 		t.Fatalf("got error: %v", err)
 	}
